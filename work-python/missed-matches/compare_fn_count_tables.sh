@@ -39,7 +39,7 @@ function count_blast_matches() {
 
 	awk '{print $1 "\t" $9}' $fn_gff  | awk -F';' '{print $1}' | sort | uniq -c | awk '{print $1 "\t" $2 "\t" $3}' > $out_dir/fn_count_table.tsv
 
-	awk -v l="$min_len" '{ if (($5=="plus" && $3-$2 < l) || ($5=="minus" && $2-$3 < l)) print $0}' $all_matches | awk -v p="$min_percid" '{if ($4 < p) print $1 "\t" $7}' | sort | uniq -c > $out_dir/fp_count_table.tsv
+	awk -v l="$min_len" '{ if (($5=="plus" && $3-$2 < l) || ($5=="minus" && $2-$3 < l)) print $0}' $all_matches | awk -v p="$min_percid" '{if ($4 < p) print $1 "\t" $7}' | sort | uniq -c | awk '{print $1 "\t" $2 "\t" $3}' > $out_dir/fp_count_table.tsv
 }
 
 #data_dir="/group/ag_abi/evelina/DREAM-stellar-benchmark/genome-wise/work/last"

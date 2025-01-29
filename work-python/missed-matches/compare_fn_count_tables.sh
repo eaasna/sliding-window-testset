@@ -31,10 +31,11 @@ function count_lastz_matches {
 }
 
 function count_blast_matches() {
-	k=$1
-	fn_gff="$data_dir/$stellar/mouse_vs_fly_e10_k$k.fn.gff"
-	all_matches="$data_dir/mouse_vs_fly_e10_k$k.bed"
-	out_dir="k${k}_blast_vs_stellar_$stellar"
+	e=$1
+	k=$2
+	fn_gff="$data_dir/$stellar/mouse_vs_fly_e${e}_k$k.fn.gff"
+	all_matches="$data_dir/mouse_vs_fly_e${e}_k$k.bed"
+	out_dir="e${e}_k${k}_blast_vs_stellar_$stellar"
 	mkdir -p $out_dir
 
 	awk '{print $1 "\t" $9}' $fn_gff  | awk -F';' '{print $1}' | sort | uniq -c | awk '{print $1 "\t" $2 "\t" $3}' > $out_dir/fn_count_table.tsv
@@ -50,5 +51,8 @@ function count_blast_matches() {
 #count_lastz_matches
 
 data_dir="/group/ag_abi/evelina/DREAM-stellar-benchmark/genome-wise/work/blast_masked"
-count_blast_matches 28
-count_blast_matches 24
+#count_blast_matches 10 28
+#count_blast_matches 10 24
+
+count_blast_matches "1e-5" 28
+count_blast_matches "1e-5" 24

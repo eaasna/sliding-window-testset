@@ -1,0 +1,10 @@
+time	mem	error-code	command	bins	fpr	max-er	min-len	kmer-size	threshold	threads	minimiser	cmin	cmax	error-rate	repeat-flag	bin-entropy-cutoff	cart-max-cap	max-carts	repeat-period	repeat-length	repeats	matches
+6743.10	111804344	0	valik-search	1024	0.005	0.06	50	-1	-1	32	yes	0	254	3	--keep-best-repeats	0.25	2000	1024	1	1000	0	5352
+6704.65	111902032	0	valik-search	1024	0.005	0.06	50	-1	-1	32	yes	0	254	3	--keep-best-repeats	0.25	2000	1024	1	1000	0	5352
+6943.56	111773224	0	valik-search	1024	0.005	0.06	50	-1	-1	32	yes	0	254	3	--keep-best-repeats	0.25	2000	1024	1	1000	0	5352
+18.08	12552528	0	valik-search	1024	0.005	0.02	50	17	17	32	yes	0	254	1	--keep-best-repeats	0.25	2000	1024	1	1000	6	1630
+247.49	64333616	0	valik-search	1024	0.005	0.04	50	15	6	32	yes	0	254	2	--keep-best-repeats	0.25	2000	1024	1	1000	15483	840
+19.54	12547896	0	valik-search	1024	0.005	0.02	50	18	15	32	yes	0	254	1	--keep-best-repeats	0.25	2000	1024	1	1000	9	1637
+23.66	14791576	0	valik-search	1024	0.005	0.02	50	15	21	32	yes	0	254	1	--keep-best-repeats	0.25	2000	1024	1	1000	16	1625
+7059.22	111842980	0	valik-search	1024	0.005	0.06	50	-1	-1	32	yes	0	254	3	--keep-best-repeats	0.25	2000	1024	1	1000	0	5352
+274.28	71259196	0	valik-search	1024	0.005	0.04	50	16	9	32	yes	0	254	2	--keep-best-repeats	0.25	2000	1024	1	1000	4189	2422

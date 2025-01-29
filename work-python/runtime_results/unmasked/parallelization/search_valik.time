@@ -1,0 +1,15 @@
+time	mem	error-code	command	bins	fpr	max-er	min-len	threads	minimiser	cmin	cmax	error-rate	repeat-flag	bin-entropy-cutoff	cart-max-cap	max-carts	repeats	matches
+217.94	19850556	0	valik-search	1024	0.005	0.0267	150	16	yes	0	254	0.0267	--keep-best-repeats	N/A	20000	1024	471	30067	
+86.32	46367848	0	valik-search	1024	0.005	0.0267	150	96	yes	0	254	0.0267	--keep-best-repeats	N/A	20000	1024	471	30068	
+1558.25	13942576	0	valik-search	1024	0.005	0.0267	150	2	yes	0	254	0.0267	--keep-best-repeats	N/A	20000	1024	471	30065	
+794.08	15106200	0	valik-search	1024	0.005	0.0267	150	4	yes	0	254	0.0267	--keep-best-repeats	N/A	20000	1024	471	30069	
+132.29	25171100	0	valik-search	1024	0.005	0.0267	150	32	yes	0	254	0.0267	--keep-best-repeats	N/A	20000	1024	471	30066	
+412.88	16989532	0	valik-search	1024	0.005	0.0267	150	8	yes	0	254	0.0267	--keep-best-repeats	N/A	20000	1024	471	30068	
+97.90	35910136	0	valik-search	1024	0.005	0.0267	150	64	yes	0	254	0.0267	--keep-best-repeats	N/A	20000	1024	471	30067	
+3099.53	13960012	0	valik-search	1024	0.005	0.0267	150	1	yes	0	254	0.0267	--keep-best-repeats	N/A	20000	1024	471	30068	
+253.36	40176440	0	valik-search	1024	0.005	0.0267	150	64	yes	0	254	0.0267	--keep-best-repeats	0.9	20000	1024	471	82278	
+374.12	28228624	0	valik-search	1024	0.005	0.0267	150	32	yes	0	254	0.0267	--keep-best-repeats	0.9	20000	1024	471	82277	
+509.17	22372848	0	valik-search	1024	0.005	0.0267	150	16	yes	0	254	0.0267	--keep-best-repeats	0.9	20000	1024	471	82285	
+995.01	18871012	0	valik-search	1024	0.005	0.0267	150	8	yes	0	254	0.0267	--keep-best-repeats	0.9	20000	1024	471	82279	
+3904.72	17235896	0	valik-search	1024	0.005	0.0267	150	2	yes	0	254	0.0267	--keep-best-repeats	0.9	20000	1024	471	82281	
+7872.15	19327632	0	valik-search	1024	0.005	0.0267	150	1	yes	0	254	0.0267	--keep-best-repeats	0.9	20000	1024	471	82267

@@ -4,6 +4,8 @@ set -ex
 
 data_dir="/group/ag_abi/evelina/DREAM-stellar-benchmark/genome-wise/work/last"
 stellar="l50_e2"
+min_len=50
+min_percid=96
 
 function count_matches() {
 	m=$1
@@ -14,7 +16,7 @@ function count_matches() {
 
 	awk '{print $1 "\t" $9}' $fn_gff  | awk -F';' '{print $1}' | sort | uniq -c | awk '{print $1 "\t" $2 "\t" $3}' > $out_dir/fn_count_table.tsv
 
-	grep -v "#" $all_matches | awk '{ if ( $4 < 50 && $3 < 94 ) print }' | awk '{print $2 "\t" $1}' | sort | uniq -c | awk '{print $1 "\t" $2 "\t" $3}' > $out_dir/fp_count_table.tsv
+	grep -v "#" $all_matches | awk -v l="$min_len" -v p="$min_percid" '{ if ( $4 < l && $3 < p ) print $2 "\t" $1}' | sort | uniq -c | awk '{print $1 "\t" $2 "\t" $3}' > $out_dir/fp_count_table.tsv
 }
 
 count_matches 100

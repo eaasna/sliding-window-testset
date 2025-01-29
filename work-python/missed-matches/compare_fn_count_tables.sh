@@ -30,9 +30,25 @@ function count_lastz_matches {
 	grep -v "#" $all_matches | awk -v l="$min_len" -v p="$min_percid" '{ if ( $4 < l && $3 < p ) print $2 "\t" $1}' | sort | uniq -c | awk '{print $1 "\t" $2 "\t" $3}' > $out_dir/fp_count_table.tsv
 }
 
+function count_blast_matches() {
+	k=$1
+	fn_gff="$data_dir/$stellar/mouse_vs_fly_e10_k$k.fn.gff"
+	all_matches="$data_dir/mouse_vs_fly_e10_k$k.bed"
+	out_dir="k${k}_blast_vs_stellar_$stellar"
+	mkdir -p $out_dir
+
+	awk '{print $1 "\t" $9}' $fn_gff  | awk -F';' '{print $1}' | sort | uniq -c | awk '{print $1 "\t" $2 "\t" $3}' > $out_dir/fn_count_table.tsv
+
+	awk -v l="$min_len" '{ if (($5=="plus" && $3-$2 < l) || ($5=="minus" && $2-$3 < l)) print $0}' $all_matches | awk -v p="$min_percid" '{if ($4 < p) print $1 "\t" $7}' | sort | uniq -c > $out_dir/fp_count_table.tsv
+}
+
 #data_dir="/group/ag_abi/evelina/DREAM-stellar-benchmark/genome-wise/work/last"
 #count_last_matches 100
 #count_last_matches 10
 
-data_dir="/group/ag_abi/evelina/DREAM-stellar-benchmark/genome-wise/work/lastz_step3"
-count_lastz_matches
+#data_dir="/group/ag_abi/evelina/DREAM-stellar-benchmark/genome-wise/work/lastz_step3"
+#count_lastz_matches
+
+data_dir="/group/ag_abi/evelina/DREAM-stellar-benchmark/genome-wise/work/blast_masked"
+count_blast_matches 28
+count_blast_matches 24

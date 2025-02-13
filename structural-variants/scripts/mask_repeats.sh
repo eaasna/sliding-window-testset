@@ -17,7 +17,8 @@ for exec in "${execs[@]}"; do
     fi
 done
 
-work_dir="/buffer/ag_abi/evelina/1000genomes/hifi/ftp.sra.ebi.ac.uk/vol1/run"
+work_dir=$1
+
 for sample in $work_dir/*/*/unmapped.fa;do
 	sample_dir="$(dirname "$sample")"
 	

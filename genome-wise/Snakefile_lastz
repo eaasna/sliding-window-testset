@@ -1,17 +1,20 @@
+import os
+shared_script_dir=os.getcwd() + "/../scripts"
+
 workdir : config["workdir"]
 stellar = "/group/ag_abi/evelina/stellar3/build/bin/stellar"
 valik = config["valik_exec"]
 
 stellar_out=config["stellar_out"]
 blast_out=config["blast_out"]
-lastz_out=config["lastz_out"]
 dream_out=config["dream_out"]
+lastz_out=config["lastz_out"]
+last_out=config["last_out"]
 
 #-------- split parameters --------
 fpr_list = config["ibf_fpr"]
 bin_list = config["ibf_bins"]
 min_lens = config["min_len"]
-valik_shapes = config["valik_shapes"]
 
 #-------- build parameters --------
 minimiser_flag = config["minimiser_flag"]
@@ -20,6 +23,7 @@ cmax_list = config["kmer_cmax"]
 
 #-------- search parameters --------
 valik_kmer_lengths = config["valik_kmer_lengths"]
+valik_shapes = config["valik_shapes"]
 valik_thresh = config["valik_thresh"]
 errors = config["errors"]
 repeat_flag = config["repeat_flag"]
@@ -56,6 +60,12 @@ transition_flag = config["seed_transition"]
 step_length = config["step_length"]
 hsp = config["hsp_thresh"]
 
+#-------- LAST parameters --------
+max_tandem_repeat = 100
+last_index_every = config["last_index_every"]
+last_query_every = config["last_query_every"]
+last_init = config["last_initial_seed"]
+
 #-------- Evaluation parameters --------
 n = 1
 min_overlap = config["min_overlap"]
@@ -71,7 +81,7 @@ def dir_path(filename):
 	return os.path.split(filename)[0] + "/"
 
 def get_error_rate(wildcards):
-	return int(wildcards.er) / int(wildcards.min_len)
+	return round(int(wildcards.er) / int(wildcards.min_len), 3)
 
 
 #-------- Shared functions \--------
@@ -84,13 +94,14 @@ wildcard_constraints:
 rule make_all:
 	input:
 #		blast_out + "/blast.stellar.accuracy",
+#		dream_out + "/valik.stellar.accuracy.s",		
+#		last_out + "/last.stellar.accuracy",
+		lastz_out + "/lastz.stellar.accuracy"
 #		blast_out + "/blast.valik.accuracy",
 #		dream_out + "/valik.stellar.accuracy",
 #		dream_out + "/valik.blast.accuracy",
 #		dream_out + "/valik.stellar.accuracy.k",
 #		dream_out + "/valik.blast.accuracy.k"
-#		lastz_out + "/lastz.stellar.accuracy"
-		expand(lastz_out + "/" + run_id + "_s{s}_" + gap_flag + "_" + transition_flag + "_" + str(step_length) + ".gff", s = lastz_seeds)
 	shell:
 		"echo 'Done'"
 
@@ -99,5 +110,6 @@ include: "rules/stellar.smk"
 include: "rules/dream.smk"
 include: "rules/blast.smk"
 include: "rules/lastz.smk"
+include: "rules/last.smk"
 include: "rules/accuracy.smk"
 

@@ -30,9 +30,9 @@ rule valik_build:
 	shell:
 		"""
 		( /usr/bin/time -a -o {valik_build_log} -f "%e\t%M\t%x\t%C\t{threads}\t{bins}\t{fpr}\t{wildcards.er}\t{min_len}\t{shape}" valik build --threads {threads} --output {output} --ref-meta {input.ref_meta})
-		
+
 		truncate -s -1 {valik_build_log}
-		ls -lh {output} | awk "{{OFS="\\t"}};{{print "\t" \$5 }}" >> {valik_build_log}
+		ls -lh {output} | awk '{{ print "\t" $5 }}' >> {valik_build_log}
 		"""
 
 valik_search_log="valik_search.time"
@@ -53,13 +53,13 @@ rule valik_search:
 		"benchmarks/valik_rep{rep}_e{er}.txt"
 	shell:
 		"""
-		/usr/bin/time -a -o {valik_search_log} -f "%e\t%M\t%x\t%C\t{threads}\t{bins}\t{fpr}\t{wildcards.er}\t{min_len}\t{shape}\t{params.t}" \
+		(/usr/bin/time -a -o {valik_search_log} -f "%e\t%M\t%x\t%C\t{threads}\t{bins}\t{fpr}\t{wildcards.er}\t{min_len}\t{shape}\t{params.t}" \
 			valik search --keep-best-repeats --split-query --verbose --cache-thresholds \
 				--numMatches {num_matches} --sortThresh {sort_thresh} --time \
 				--index {input.ibf} --ref-meta {input.ref_meta} --query {input.query} \
 				--error-rate {wildcards.er} --threads {threads} --output {output} \
 				--cart-max-capacity {max_capacity} --max-queued-carts {max_carts} \
-				--threshold {params.t} &> {output}.err
+				--threshold {params.t} &> {output}.err)
 		
 		truncate -s -1 {valik_search_log}
 		wc -l {output} | awk '{{ print $1 }}' >> {valik_search_log}

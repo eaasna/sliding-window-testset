@@ -16,7 +16,7 @@ error_rate_list = snakemake.params.error_rates
 import pandas as pd
 
 log_build_time = True
-if (prefix == "stellar" or prefix == "blast_default" or prefix == "lastz"):
+if (prefix == "stellar" or prefix == "blast_default" or prefix == "lastz" or prefix == "dist_stellar"):
     log_build_time = False
 
 dfs = []

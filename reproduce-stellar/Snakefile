@@ -1,13 +1,14 @@
 import os 
-simulation_script_dir=os.getcwd() + "/scripts"
-script_dir=os.getcwd() + "/../scripts"
+shared_script_dir=os.getcwd() + "/../scripts"
+script_dir=os.getcwd() + "/scripts"
 print(script_dir)
 
 n = config["repeat"]
 repetitions = list(range(n))
 print("Number of repetitions " + str(len(repetitions)))
 
-error_rates = [0, 0.02, 0.04, 0.06, 0.08, 0.1]
+all_error_rates = [0, 0.02, 0.04, 0.06, 0.08, 0.1]
+error_rates = [0, 0.02, 0.04, 0.06]
 
 # local match lengths 
 min_len = 50
@@ -32,15 +33,13 @@ bins = config["ibf_bins"]
 overlap = min_len - 1
 max_capacity = config["cart_max_capacity"]
 max_carts = config["max_queued_carts"]
-shape = "111101101101111"
+shape = "1110100101001101111"
 shape_weight = shape.count("1")
 shape_size = len(shape)
 
 def get_threshold(wildcards):
 	errors = round(float(wildcards.er) * min_len)
 	threshold = min_len - shape_size + 1 - (errors * shape_size)
-	if (threshold < -30):
-		threshold = 4	
 	if (threshold < 3):
 		threshold = max(min_len - shape_weight + 1 - (errors * shape_weight), 5)
 	print("Threshold " + str(threshold) + " for " + str(errors) + " errors")
@@ -79,18 +78,22 @@ def get_seed(wildcards):
 
 rule make_all:
 	input:
+		#expand("ref_rep{rep}.fasta", rep = repetitions)
 		#expand("/dev/shm/rep{rep}.index", rep = repetitions, er = error_rates)
-		#expand("valik/rep{rep}_e{er}.gff", rep = repetitions, er = error_rates)
 		#expand("evaluation/valik_rep{rep}_e{er}.tsv", rep = repetitions, er = error_rates),
 		#expand("evaluation/stellar_rep{rep}_e{er}.tsv", rep = repetitions, er = error_rates)
 		"stellar_table1.tsv",
+		"dist_stellar_table1.tsv",
 		"blast_table1.tsv",
 		"blast_default_table1.tsv",
 		"valik_table1.tsv",
 		"last_table1.tsv",
 		"lastz_table1.tsv"
-		#expand("last/rep{rep}_e{er}.bed", rep = repetitions, er = error_rates)
-		#expand("ref_rep{rep}.fasta", rep = repetitions)
+		#expand("lastz/rep{rep}_e{er}.bed", rep = repetitions, er = all_error_rates),
+		#expand("last/rep{rep}_e{er}.bed", rep = repetitions, er = all_error_rates),
+		#expand("blast/rep{rep}_e{er}.bed", rep = repetitions, er = all_error_rates),
+		#expand("blast_default/rep{rep}_e{er}.bed", rep = repetitions, er = all_error_rates),
+		#expand("valik/rep{rep}_e{er}.gff", rep = repetitions, er = all_error_rates)
 	shell:
 		"echo 'Done'"
 

@@ -6,7 +6,7 @@ rule simulate_sequences:
 		ref_seed = get_seed,
 		query_seed = get_seed
 	shell:      
-		simulation_script_dir + "/simulate_sequences.sh {wildcards.rep} {ref_len} {query_len} {params.ref_seed} {params.query_seed}"
+		"{script_dir}/simulate_sequences.sh {wildcards.rep} {ref_len} {query_len} {params.ref_seed} {params.query_seed}"
 
 rule simulate_matches:
 	input:
@@ -19,5 +19,5 @@ rule simulate_matches:
 	params:
 		seed = get_seed
 	shell:      
-		simulation_script_dir + "/simulate_local_matches.sh {wildcards.rep} {min_len} {max_len} {ref_len} {wildcards.er} {matches} {params.seed}"
+		"{script_dir}/simulate_local_matches.sh {wildcards.rep} {min_len} {max_len} {ref_len} {wildcards.er} {matches} {params.seed}"
 

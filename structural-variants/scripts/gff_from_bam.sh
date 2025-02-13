@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-work_dir="/buffer/ag_abi/evelina/1000genomes/hifi/ftp.sra.ebi.ac.uk/vol1/run/ERR386/ERR3861389"
+work_dir="/buffer/ag_abi/evelina/1000genomes/phase2/ftp.sra.ebi.ac.uk/vol1/run/ERR386/ERR3861389"
 cd $work_dir
 bam_in="chr16.sam"
 gff_out="chr16_from_sam.gff"

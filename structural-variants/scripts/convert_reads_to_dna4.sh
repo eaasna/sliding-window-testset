@@ -17,19 +17,14 @@ for exec in "${execs[@]}"; do
     fi
 done
 
-ref="/srv/data/evelina/human/GCA_000001405.15_GRCh38_full_analysis_set.fna"
-ref_dna4="/srv/data/evelina/human/unmasked_dna4.fa"
-if [ ! -f $ref_dna4 ]; then
-	st_dna5todna4 $ref > $ref_dna4 
-fi
-
-#work_dir="/buffer/ag_abi/evelina/1000genomes/hifi/ftp.sra.ebi.ac.uk/vol1/run"
-#for sample in $work_dir/*/*/unmapped.fa;do
-#	sample_dir="$(dirname "$sample")"
-#	
-#	dna4="$sample_dir/unmasked_dna4.fa"
-#	if [ ! -f $dna4 ]; then
-#		st_dna5todna4 $sample > $dna4	
-#	fi
-#done
+# this does not seem necessary
+work_dir="/buffer/ag_abi/evelina/1000genomes/phase2/ftp.sra.ebi.ac.uk/vol1/run"
+for sample in $work_dir/*/*/unmapped.fa;do
+	sample_dir="$(dirname "$sample")"
+	
+	dna4="$sample_dir/unmasked_dna4.fa"
+	if [ ! -f $dna4 ]; then
+		st_dna5todna4 $sample > $dna4	
+	fi
+done
 

@@ -1,6 +1,5 @@
 import os
-script_dir=os.getcwd() + "/../scripts"
-print(script_dir)
+shared_script_dir=os.getcwd() + "/../scripts"
 
 workdir : config["workdir"]
 stellar = "/group/ag_abi/evelina/stellar3/build/bin/stellar"
@@ -62,9 +61,10 @@ step_length = config["step_length"]
 hsp = config["hsp_thresh"]
 
 #-------- LAST parameters --------
+max_tandem_repeats = 100
 last_index_every = config["last_index_every"]
 last_query_every = config["last_query_every"]
-last_init = config["last_initial_seed"]
+last_initial_matches = config["last_initial_matches"]
 
 #-------- Evaluation parameters --------
 n = 1
@@ -93,9 +93,9 @@ wildcard_constraints:
 
 rule make_all:
 	input:
-		blast_out + "/blast.stellar.accuracy",
-		dream_out + "/valik.stellar.accuracy.s",		
-		last_out + "/last.stellar.accuracy",
+#		blast_out + "/blast.stellar.accuracy",
+#		dream_out + "/valik.stellar.accuracy.s",		
+#		last_out + "/last.stellar.accuracy",
 		lastz_out + "/lastz.stellar.accuracy"
 #		blast_out + "/blast.valik.accuracy",
 #		dream_out + "/valik.stellar.accuracy",

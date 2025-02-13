@@ -1,13 +1,10 @@
 last_log = last_out + "/last.time"
 f = open(last_log, "a")
-f.write("time\tmem\terror-code\tcommand\tthreads\tindex-every\tquery-every\tword-size\tmatches\n")
+f.write("time\tmem\terror-code\tcommand\tthreads\tindex-every\tquery-every\tinitial-matches\tmatches\n")
 f.close()
 
-#def db_name(wildcards):
-#	return run_id + "_w" + wildcards.w
-
 def db_name(wildcards):
-	return last_out + "/" + run_id
+	return last_out + "/" + run_id + "_w" + wildcards.last_w
 
 # https://gitlab.com/mcfrith/last/-/blob/main/doc/last-tuning.rst
 # -c: prevents lastal using huge amounts of memory and time on many ways of aligning centromeric repeats.
@@ -26,7 +23,7 @@ rule last_index:
 	shell:
 		"""
 		( /usr/bin/time -a -o {last_log} -f "%e\t%M\t%x\t%C\t{threads}\t{wildcards.last_w}" \
-			lastdb {params.db} -c -P{threads} {input} 2> last_index.err )
+			lastdb {params.db} -c -P{threads} -U {max_tandem_repeats} {input} 2> last_index.err )
 		"""
 
 # https://gitlab.com/mcfrith/last/-/blob/main/doc/last-seeds.rst
@@ -39,19 +36,19 @@ rule last_index:
 rule last_search:
 	input:
 		ref = dir_path(config["ref"]) + "dna4.fasta",
-		db = last_out + "/" + run_id + ".suf",
+		db = last_out + "/" + run_id + "_w{last_w}.suf",
 		query = dir_path(config["query"]) + "dna4.fasta"
 	output:
-		last_out + "/" + run_id + "_w{last_w}_k{last_k}_l{last_l}.tsv"
+		last_out + "/" + run_id + "_w{last_w}_k{last_k}_m{last_m}.tsv"
 	threads: workflow.cores
 	params:
 		db = db_name
 	shell:
 		"""
-		(timeout 24h /usr/bin/time -a -o {last_log} -f "%e\t%M\t%x\t%C\t{threads}\t{wildcards.last_w}\t{wildcards.last_k}\t{wildcards.last_l}" \
+		(timeout 24h /usr/bin/time -a -o {last_log} -f "%e\t%M\t%x\t%C\t{threads}\t{wildcards.last_w}\t{wildcards.last_k}\t{wildcards.last_m}" \
 			lastal -P{threads} {params.db} {input.query} \
-				-l {wildcards.last_l} -k {wildcards.last_k} \
-				-f BlastTab > {output})
+				-k {wildcards.last_k} \
+				-f BlastTab -m {wildcards.last_m} > {output})
 
 		truncate -s -1 {last_log}
 		grep -v [#] {output} | wc -l | awk '{{print "\t" $1}}' >> {last_log}
@@ -62,15 +59,10 @@ rule last_search:
 # Stellar reverse strand matches (dstart < dend) & (qstart < qend)
 rule last_convert_to_blast:
 	input:
-		last_out + "/" + run_id + "_w{last_w}_k{last_k}_l{last_l}.tsv"
+		last_out + "/" + run_id + "_w{last_w}_k{last_k}_m{last_m}.tsv"
 	output:
-		last_out + "/" + run_id + "_w{last_w}_k{last_k}_l{last_l}.bed"
+		last_out + "/" + run_id + "_w{last_w}_k{last_k}_m{last_m}.bed"
 	threads: 1
 	shell:
-		"""
-		grep -v "#" {input} | \
-			awk '{ if($7>$8) $5="minus"; else $5="plus"; print $1 "\t" $9 "\t" $10 "\t" $3 "\t" $5 "\t" $11 "\t" $2 "\t" $7 "\t" $8 ; }' | \
-			awk '$8>$9{tmp=$8; $8=$9; $9=$8} 1' | \
-			awk '$5=="minus"{tmp=$2; $2=$3; $3=tmp} 1' > {output}
-		"""
+		"{shared_script_dir}/blast_like_to_bed.sh {input} {output}"
 

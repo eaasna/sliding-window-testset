@@ -13,7 +13,7 @@ query: "/srv/data/evelina/fly/query_concat.fa"
 run_id: "mouse_vs_fly"
 
 #-------- Stellar search parameters --------
-errors: [2]
+errors: [1, 2, 3]
 min_len: [50]
 min_overlap: [25]
 

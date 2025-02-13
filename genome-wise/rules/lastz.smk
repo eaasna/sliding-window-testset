@@ -18,7 +18,7 @@ rule lastz_search:
 				--seed={wildcards.s} --step={step_length} --progress=1 --format=blastn > {output})
 
 		truncate -s -1 {lastz_log}
-		grep ^s {output} | wc -l | awk '{{print "\t" $1 / 2}}' >> {lastz_log}
+		wc -l {output} | awk '{{print "\t" $1}}' >> {lastz_log}
 		"""
 
 rule lastz_convert_to_blast:
@@ -28,10 +28,4 @@ rule lastz_convert_to_blast:
 		lastz_out + "/" + run_id + "_s{s}_" + gap_flag + "_" + transition_flag + "_" + str(step_length) + ".bed"
 	threads: 1
 	shell:
-		"""
-		grep -v "#" {input} | \
-			awk '{ if($7>$8) $5="minus"; else $5="plus"; print $1 "\t" $9 "\t" $10 "\t" $3 "\t" $5 "\t" $11 "\t" $2 "\t" $7 "\t" $8 ; }' | \
-			awk '$8>$9{tmp=$8; $8=$9; $9=$8} 1' | \
-			awk '$5=="minus"{tmp=$2; $2=$3; $3=tmp} 1' > {output}
-		"""
-
+		"{shared_script_dir}/blast_like_to_bed.sh {input} {output}"

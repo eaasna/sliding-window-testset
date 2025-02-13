@@ -1,17 +1,18 @@
 #!/bin/bash
 
-set -e
-
-if [[ "$#" -ne 2 ]]; then
-	echo "Usage: bash find_inversion.sh <work_dir> <seq_in>"
+if [[ "$#" -ne 3 ]]; then
+	echo "Usage: bash find_inversion.sh <local_matches> <min_len> <er>"
 	exit 1
 fi
 
-work_dir=$1
-matches=$2
+work_dir=$(dirname $1)
+matches=$(basename $1)
+min_len=$2
+er=$3
 
 cd $work_dir 
-mkdir -p potential_inversions
+inv_dir="potential_inversions_l${min_len}_e${er}"
+mkdir -p $inv_dir
 
 awk '$7 == "+" {print}' $matches > forward_matches.gff
 awk '$7 == "-" {print}' $matches > reverse_matches.gff
@@ -48,13 +49,13 @@ do
 			# same_ref_region=$((forward_same_ref_region+reverse_same_ref_region))
 			# find read that matches on forward and reverse strand of the same chr
 			if [ $forward_in_ref_region -ge 1 ] && [ $reverse_in_ref_region -ge 1 ]; then
-				grep $id $matches | awk -v chr_id="$chr" ' $1==chr_id '  > potential_inversions/${chr}_${ind}.gff
+				grep $id $matches | awk -v chr_id="$chr" ' $1==chr_id '  > $inv_dir/${chr}_${ind}.gff
 		
 				forward_query_table="$ind.qstart.forward.tsv"
 				reverse_query_table="$ind.qstart.reverse.tsv"	
 
-				grep -f $forward_ref_region potential_inversions/${chr}_$ind.gff | awk '$7 == "+" {print $9}' | awk -F';' '{print $2}' | sed 's/seq2Range=//g' | awk -F',' '{print $1}' | sort -n | uniq -c > $forward_query_table
-				grep -f $reverse_ref_region potential_inversions/${chr}_$ind.gff | awk '$7 == "-" {print $9}' | awk -F';' '{print $2}' | sed 's/seq2Range=//g' | awk -F',' '{print $1}' | sort -n | uniq -c > $reverse_query_table
+				grep -f $forward_ref_region $inv_dir/${chr}_$ind.gff | awk '$7 == "+" {print $9}' | awk -F';' '{print $2}' | sed 's/seq2Range=//g' | awk -F',' '{print $1}' | sort -n | uniq -c > $forward_query_table
+				grep -f $reverse_ref_region $inv_dir/${chr}_$ind.gff | awk '$7 == "-" {print $9}' | awk -F';' '{print $2}' | sed 's/seq2Range=//g' | awk -F',' '{print $1}' | sort -n | uniq -c > $reverse_query_table
 				max_forward=$(tail -n 1 $forward_query_table | awk '{print $2}')
 				min_forward=$(head -n 1 $forward_query_table | awk '{print $2}')
 				max_reverse=$(tail -n 1 $reverse_query_table | awk '{print $2}')
@@ -73,16 +74,16 @@ do
 				fi		
 				# require multiple adjacent local matches in the same reference region
 				if [ $forward_range -ge 20 ] && [ $reverse_range -ge 20 ]; then
-					echo -e "\tForward\t$forward_alignments"
-					echo -e "\tReverse\t$reverse_alignments"
-					echo "Potential inversions for read $id on $chr"
+					#echo -e "\tForward\t$forward_alignments"
+					#echo -e "\tReverse\t$reverse_alignments"
+					#echo "Potential inversions for read $id on $chr"
 					found_inversion=1
 				fi
 				rm $forward_query_table
 				rm $reverse_query_table
 				
 				if [ $found_inversion -eq 0 ]; then
-					rm potential_inversions/${chr}_$ind.gff
+					rm $inv_dir/${chr}_$ind.gff
 				fi
 			fi
 			rm $forward_ref_region

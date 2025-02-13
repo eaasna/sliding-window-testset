@@ -22,7 +22,7 @@ rule valik_compare_blast:
 			echo -e "$test\t$match_count\t" >> {output}
 			
 			truncate -s -1 {output}
-			{script_dir}/search_accuracy.sh $truth $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
+			{shared_script_dir}/search_accuracy.sh $truth $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
 			tail -n 1 tmp.log >> {output}
 			rm tmp.log
 	
@@ -56,7 +56,7 @@ rule valik_kmer_compare_blast:
 			echo -e "$test\t$match_count\t" >> {output}
 			
 			truncate -s -1 {output}
-			{script_dir}/search_accuracy.sh $truth $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
+			{shared_script_dir}/search_accuracy.sh $truth $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
 			tail -n 1 tmp.log >> {output}
 			rm tmp.log
 	
@@ -88,7 +88,7 @@ rule valik_compare_stellar:
 			echo -e "$test\t$match_count\t" >> {output}
 			
 			truncate -s -1 {output}
-			{script_dir}/search_accuracy.sh {input.truth_file} $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
+			{shared_script_dir}/search_accuracy.sh {input.truth_file} $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
 			tail -n 1 tmp.log >> {output}
 			rm tmp.log
 	
@@ -129,7 +129,7 @@ rule valik_kmer_compare_stellar:
 			echo -e "$test\t$match_count\t" >> {output}
 			
 			truncate -s -1 {output}
-			{script_dir}/search_accuracy.sh {input.truth_file} $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
+			{shared_script_dir}/search_accuracy.sh {input.truth_file} $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
 			tail -n 1 tmp.log >> {output}
 			rm tmp.log
 	
@@ -169,7 +169,7 @@ rule valik_kmer_thresh_compare_stellar:
 			echo -e "$test\t$match_count\t" >> {output}
 			
 			truncate -s -1 {output}
-			{script_dir}/search_accuracy.sh {input.truth_file} $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
+			{shared_script_dir}/search_accuracy.sh {input.truth_file} $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
 			tail -n 1 tmp.log >> {output}
 			rm tmp.log
 	
@@ -209,7 +209,7 @@ rule valik_shape_compare_stellar:
 			echo -e "$test\t$match_count\t" >> {output}
 			
 			truncate -s -1 {output}
-			{script_dir}/search_accuracy.sh {input.truth_file} $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
+			{shared_script_dir}/search_accuracy.sh {input.truth_file} $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
 			tail -n 1 tmp.log >> {output}
 			rm tmp.log
 	
@@ -251,7 +251,7 @@ rule blast_compare_stellar:
 			echo -e "$test\t$match_count\t" >> {output}
 			
 			truncate -s -1 {output}
-			{script_dir}/search_accuracy.sh $truth $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
+			{shared_script_dir}/search_accuracy.sh $truth $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
 			tail -n 1 tmp.log >> {output}
 			rm tmp.log
 	
@@ -284,7 +284,7 @@ rule blast_compare_valik:
 			echo -e "$test\t$match_count\t" >> {output}
 			
 			truncate -s -1 {output}
-			{script_dir}/search_accuracy.sh $truth $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
+			{shared_script_dir}/search_accuracy.sh $truth $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
 			tail -n 1 tmp.log >> {output}
 			rm tmp.log
 	
@@ -318,7 +318,16 @@ rule lastz_compare_stellar:
 				echo -e "$test\t$match_count\t" >> {output}
 			
 				truncate -s -1 {output}
-				{script_dir}/search_accuracy.sh $truth $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
+				{shared_script_dir}/search_accuracy.sh $truth $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
+				
+				min_len=$(echo $truth | awk -F'_l' '{{print $2}}' | awk -F'_' '{{print $1}}')
+				err=$(echo $truth | awk -F'_e' '{{print $2}}' | awk -F'_' '{{print $1}}')
+				
+				stellar_id="{lastz_out}/l${{min_len}}_e${{err}}"
+				mkdir -p $stellar_id
+
+				mv {lastz_out}/{run_id}_s*{gap_flag}*{transition_flag}*.fn.gff $stellar_id/
+				mv {lastz_out}/{run_id}_s*{gap_flag}*{transition_flag}*.fp.bed $stellar_id/
 				tail -n 1 tmp.log >> {output}
 				rm tmp.log
 	
@@ -331,7 +340,7 @@ rule lastz_compare_stellar:
 rule last_compare_stellar:
 	input:
 		ref_meta = dream_out + "/meta/b" + str(bin_list[0]) + "_fpr" + str(fpr_list[0]) + "_l" + str(min_lens[0]) + "_e" + str(errors[0]) + ".bin",
-		test_files = expand(last_out + "/" + run_id + "_w{last_w}_k{last_k}_l{last_l}.bed", last_w = last_index_every, last_k = last_query_every, last_l = last_init),
+		test_files = expand(last_out + "/" + run_id + "_w{last_w}_k{last_k}_m{last_m}.bed", last_w = last_index_every, last_k = last_query_every, last_m = last_initial_matches),
 		truth_files = expand(stellar_out + "/" + run_id + "_l{min_len}_e{er}_rp" + str(repeat_periods[0]) + "_rl" + str(repeat_lengths[0]) + ".gff", min_len = min_lens, er = errors)
 	output:
 		last_out + "/last.stellar.accuracy"
@@ -352,7 +361,16 @@ rule last_compare_stellar:
 				echo -e "$test\t$match_count\t" >> {output}
 			
 				truncate -s -1 {output}
-				{script_dir}/search_accuracy.sh $truth $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
+				{shared_script_dir}/search_accuracy.sh $truth $test {params.min_len} {params.min_overlap} {input.ref_meta} tmp.log
+				
+				min_len=$(echo $truth | awk -F'_l' '{{print $2}}' | awk -F'_' '{{print $1}}')
+				err=$(echo $truth | awk -F'_e' '{{print $2}}' | awk -F'_' '{{print $1}}')
+				
+				stellar_id="{last_out}/l${{min_len}}_e${{err}}"
+				mkdir -p $stellar_id
+
+				mv {last_out}/{run_id}_w*_k*_m*.fn.gff $stellar_id/
+				mv {last_out}/{run_id}_w*_k*_m*.fp.bed $stellar_id/
 				tail -n 1 tmp.log >> {output}
 				rm tmp.log
 	
